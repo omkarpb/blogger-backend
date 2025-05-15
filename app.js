@@ -1,10 +1,10 @@
+/* eslint-disable no-undef */
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require('mongoose');
-const Blogpost = require('./schema/blogpost');
 const cors = require('cors');
 
 var indexRouter = require('./routes/index');
@@ -40,14 +40,14 @@ app.use(function (req, res, next) {
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (err, req, res) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
   res.sendStatus(err.status || 500);
-  // res.render('error');
+  res.render('error', {title: 'Blogger Backend'});
 });
 
 module.exports = app;

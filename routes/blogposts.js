@@ -26,8 +26,7 @@ const authenticateUser = (req, res, next) => {
     });
 };
 
-router.post('/', authenticateUser, async (req, res, next) => {
-    console.log('Inside post');
+router.post('/', authenticateUser, async (req, res) => {
     const { title, content, tags, category } = req.body;
     try {
         await Blogpost.create({
@@ -39,7 +38,6 @@ router.post('/', authenticateUser, async (req, res, next) => {
         });
         res.send(200);
     } catch (err) {
-        console.log('err', err);
         res.status(500).json({ message: err.message });
     }
 });
@@ -51,16 +49,16 @@ router.get('/:id', authenticateUser, async (req, res) => {
         const item = await Blogpost.findOne({ _id: id });
         res.json(item);
     } catch (err) {
-        res.send(500).json({ message: err.message });
+        res.status(500).json({ message: err.message });
     }
 });
 
-router.get('/', authenticateUser, (req, res, next) => {
+router.get('/', authenticateUser, async (req, res, next) => {
     try {
-        const items = Blogpost.find();
+        const items = await Blogpost.find();
         res.json(items);
     } catch (err) {
-        res.send(500).json({ message: err.message });
+        next(createError(500, err.message));
     }
 });
 
@@ -72,19 +70,18 @@ router.put('/:id', authenticateUser, async (req, res, next) => {
         await Blogpost.updateOne({ _id: id }, { title, content, tags, category, isPublished, publishDate: Date.now() });
         res.sendStatus(200);
     } catch (err) {
-        console.log('put err', err);
-        res.send(500).json({ message: err.message });
+        next(createError(500, err.message));
     }
 });
 
 
-router.delete('/', authenticateUser, async (req, res, next) => {
-  const { id } = req.body;
+router.delete('/:id', authenticateUser, async (req, res, next) => {
+  const { id } = req.params;
   try {
     await Blogpost.deleteOne({ _id: id});
     res.sendStatus(200);
   } catch (err) {
-    next(createError(500));
+    next(createError(500, err.message));
   }
 });
 

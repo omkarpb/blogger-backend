@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken'); // For creating tokens (optional, but common for authentication)
 const User = require('../schema/user'); // Assuming your User model is in '../models/User.js'
 
